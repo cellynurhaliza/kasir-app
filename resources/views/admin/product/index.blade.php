@@ -45,7 +45,7 @@
                         <div class="table-responsive">
                             <table class="table">
                                 <div class="p-4 text-end">
-                                    <a href=" " type="button"
+                                    <a href="{{ route('admin.product.create') }}" type="button"
                                         class="btn btn-primary">Tambah Produk</a>
                                 </div>
                                 <thead class="thead-light">
@@ -59,26 +59,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($products as $product)
                                         <tr>
-                                            <th scope="row">1</th>
-                                            <td><img src=" " width="100"></td>
-                                            <td>Jelly</td>
-                                            <td>Rp. 15.000</td>
-                                            <td>150</td>
+                                            <th scope="row">{{ $loop->iteration }}</th>
+                                            <td><img src="{{ asset('storage/' . $product->image) }}" width="100"></td>
+                                            <td>{{ $product->name }}</td>
+                                            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                                            <td>{{ $product->stock }}</td>
                                             <td>
                                                 <div class="text-center">
-                                                    <a href=" "
+                                                    <a href="{{ route('admin.product.edit', ['id' => $product->id]) }}"
                                                         type="button" class="btn btn-warning update-edit-btn me-2"
-                                                        data-id="id" data-name="name"
-                                                        data-price="price"
-                                                        data-image="image"
-                                                        data-stock="stock}" data-bs-toggle="modal">Edit</a>
+                                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                        data-price="{{ $product->price }}"
+                                                        data-image="{{ $product->image }}"
+                                                        data-stock="{{ $product->stock }}" data-bs-toggle="modal">Edit</a>
                                                     <button type="button" class="btn btn-info update-stok-btn me-2"
-                                                        data-id="id" data-name="name"
-                                                        data-stock="stock" data-bs-toggle="modal"
+                                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                        data-stock="{{ $product->stock }}" data-bs-toggle="modal"
                                                         data-bs-target="#updateStokModal">Edit Stok</button>
-                                                    <form action=" "
+                                                    <form action="{{ route('admin.product.destroy', $product->id) }}"
                                                         method="POST" class="d-inline"
                                                         onsubmit="return confirm('Yakin ingin menghapus produk ini?');">
                                                         @csrf
@@ -88,7 +88,7 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                    
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -127,57 +127,69 @@
         </div>
     </div>
     <script>
+        $(document).ready(function() {
+            $(".update-stok-btn").click(function() {
+                let id = $(this).data("id");
+                let name = $(this).data("name");
+                let stock = $(this).data("stock");
+
+                $("#produk_id").val(id);
+                $("#name").val(name);
+                $("#stock").val(stock);
+            });
+
+            $("#updateStokForm").submit(function(e) {
+                e.preventDefault();
+
+                let produkId = $("#produk_id").val();
+                let stokBaru = $("#stock").val();
+
+                $.ajax({
+                    url: "/admin/product/updateStock/" + produkId,
+                    method: "PUT",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        stock: stokBaru
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: response.success,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+
+                    error: function(xhr) {
+                        alert("Gagal memperbarui stok!");
+                        console.log(xhr.responseText);
+                    }
+                });
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+            });
+
+            $(".update-stok-btn").click(function() {
+                let id = $(this).data("id");
+                let name = $(this).data("name");
+                let stock = $(this).data("stock");
+
+                $("#produk_id").val(id);
+                $("#name").val(name);
+                $("#stock").val(stock);
+
+                $("#updateStokForm").attr("action", "{{ url('admin/product/updateStock') }}/" + id);
+            });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        });
     </script>
 @endsection

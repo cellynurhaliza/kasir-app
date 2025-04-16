@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -65,19 +66,21 @@
                                 aria-expanded="false">
                                 <img src="{{ asset('assets/images/users/1.jpg') }}" alt="user"
                                     class="rounded-circle" width="31">
+
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end user-dd animated"
                                 aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="javascript:void(0)"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="ti-user m-r-5 m-l-5"></i>
-                                    <form id="logout-form" action=" " method="POST"
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                         style="display: none;">
                                         @csrf
                                         <button type="submit">Keluar</button>
                                     </form>
                                     Keluar
                                 </a>
+
                             </ul>
                         </li>
                     </ul>
@@ -88,72 +91,71 @@
             <div class="scroll-sidebar">
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-
-                <!-- Sidebar untuk Admin -->
+                        @if(Auth::user()->role === 'admin')
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('admin/dashboard') ? 'active' : '' }}"
+                        href="{{ url('admin/dashboard') }}" aria-expanded="false">
                         <i class="mdi mdi-view-dashboard"></i>
                         <span class="hide-menu">Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('admin/product*') ? 'active' : '' }}"
+                        href="{{ url('admin/product') }}" aria-expanded="false">
                         <i class="mdi mdi-store"></i>
                         <span class="hide-menu">Produk</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('admin/sale') ? 'active' : '' }}"
+                        href="{{ url('admin/sale') }}" aria-expanded="false">
                         <i class="mdi mdi-cart"></i>
                         <span class="hide-menu">Pembelian</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('admin/user') ? 'active' : '' }}"
+                        href="{{ url('admin/user') }}" aria-expanded="false">
                         <i class="mdi mdi-account-network"></i>
                         <span class="hide-menu">User</span>
                     </a>
                 </li>
-
-                <!-- Sidebar untuk Employee -->
+                @elseif(Auth::user()->role === 'employee')
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('employee/dashboard') ? 'active' : '' }}"
+                        href="{{ url('employee/dashboard') }}" aria-expanded="false">
                         <i class="mdi mdi-view-dashboard"></i>
                         <span class="hide-menu">Dashboard</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('employee/product*') ? 'active' : '' }}"
+                        href="{{ url('employee/product') }}" aria-expanded="false">
                         <i class="mdi mdi-store"></i>
                         <span class="hide-menu">Produk</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link 
-                        "
-                        href=" " aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link
+                        {{ request()->is('employee/sale') ? 'active' : '' }}"
+                        href="{{ url('employee/sale') }}" aria-expanded="false">
                         <i class="mdi mdi-cart"></i>
                         <span class="hide-menu">Pembelian</span>
                     </a>
                 </li>
-
+                @endif
                     </ul>
                 </nav>
             </div>
         </aside>
-        @yield('container') 
+        @yield('container')
+
     </div>
     <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
@@ -165,5 +167,7 @@
     <script src="{{ asset('assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js') }}"></script>
     <script src="{{ asset('dist/js/pages/dashboards/dashboard1.js') }}"></script>
     @yield('scripts')
+
 </body>
+
 </html>

@@ -21,7 +21,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action=" " method="POST"
+                            <form action="{{ route('admin.product.updateEdit', $products->id) }}" method="POST"
                                 enctype="multipart/form-data" class="form-horizontal form-material mx-2">
                                 @csrf
                                 @method('PUT')
@@ -31,14 +31,14 @@
                                             <label class="col-md-12">Nama Produk</label>
                                             <div class="col-md-12">
                                                 <input type="text" id="name" name="name"
-                                                    value=" " class="form-control form-control-line">
+                                                    value="{{ $products->name }}" class="form-control form-control-line">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-12">Harga</label>
                                             <div class="col-md-12">
                                                 <input type="text" id="price" name="price"
-                                                    value="Rp. "
+                                                    value="Rp. {{ number_format($products->price, 0, ',', '.') }}"
                                                     class="form-control form-control-line">
                                             </div>
                                         </div>
@@ -47,14 +47,14 @@
                                         <div class="form-group">
                                             <label class="col-md-12">Gambar Produk</label>
                                             <div class="col-md-12">
-                                                <input type="file" name="image" value=" "
+                                                <input type="file" name="image" value="{{ $products->image }}"
                                                     class="form-control form-control-line">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-md-12">Stok</label>
                                             <div class="col-md-12">
-                                                <input type="number" name="stock" value=" "
+                                                <input type="number" name="stock" value="{{ $products->stock }}"
                                                     class="form-control form-control-line" readonly>
                                             </div>
                                         </div>
@@ -66,10 +66,10 @@
                                     </div>
                                     <script>
                                         document.getElementById('price').addEventListener('input', function(e) {
-                                            let value = e.target.value.replace(/\D/g, '');
+                                            let value = e.target.value.replace(/\D/g, ''); // Hapus karakter non-angka
                                             if (value) {
-                                                value = new Intl.NumberFormat('id-ID').format(value);
-                                                e.target.value = 'Rp ' + value;
+                                                value = new Intl.NumberFormat('id-ID').format(value); // Format angka ke ribuan
+                                                e.target.value = 'Rp ' + value; // Tambahkan Rp di depan
                                             } else {
                                                 e.target.value = '';
                                             }

@@ -21,7 +21,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action=" " method="POST"
+                            <form action="{{ route('admin.user.update', $users->id) }}" method="POST"
                                 enctype="multipart/form-data" class="form-horizontal form-material mx-2">
                                 @csrf
                                 @method('PUT')
@@ -31,7 +31,7 @@
                                             <label class="col-md-12">Email</label>
                                             <div class="col-md-12">
                                                 <input type="email" id="email" name="email"
-                                                    value=" " required
+                                                    value="{{ $users->email }}" required
                                                     class="form-control form-control-line">
                                             </div>
                                         </div>
@@ -39,10 +39,10 @@
                                             <label class="col-md-12">Role</label>
                                             <div class="col-md-12">
                                                 <select name="role" class="form-control form-control-line">
-                                                    <option value="admin" >
+                                                    <option value="admin" {{ $users->role == 'admin' ? 'selected' : '' }}>
                                                         Admin</option>
                                                     <option value="employee"
-                                                        >Employee</option>
+                                                        {{ $users->role == 'employee' ? 'selected' : '' }}>Employee</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -51,7 +51,7 @@
                                         <div class="form-group">
                                             <label class="col-md-12">Nama</label>
                                             <div class="col-md-12">
-                                                <input type="text" name="name" value=" " required
+                                                <input type="text" name="name" value="{{ $users->name }}" required
                                                     class="form-control form-control-line">
                                             </div>
                                         </div>

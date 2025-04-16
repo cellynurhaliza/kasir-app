@@ -21,7 +21,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action=" " method="POST" enctype="multipart/form-data"
+                            <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data"
                                 class="form-horizontal form-material mx-2">
                                 @csrf
                                 <div class="row">
@@ -66,7 +66,7 @@
                                             let value = e.target.value.replace(/\D/g, '');
                                             if (value) {
                                                 value = new Intl.NumberFormat('id-ID').format(value);
-                                                e.target.value = 'Rp ' + value; 
+                                                e.target.value = 'Rp ' + value;
                                             } else {
                                                 e.target.value = '';
                                             }

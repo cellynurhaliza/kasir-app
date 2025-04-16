@@ -20,8 +20,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+
                         <div class="card-body">
-                            <form action=" " method="POST" enctype="multipart/form-data"
+                            <form action="{{ route('admin.user.store') }}" method="POST" enctype="multipart/form-data"
                                 class="form-horizontal form-material mx-2">
                                 @csrf
                                 <div class="row">

@@ -22,7 +22,7 @@
                       <li class="breadcrumb-item active" aria-current="page">User</li>
                     </ol>
                   </nav>
-                <h1 class="mb-0 fw-bold">User</h1> 
+                <h1 class="mb-0 fw-bold">User</h1>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
                 <div class="card">
                     <div class="table-responsive">
                         <div class="p-4 text-end">
-                            <a href=" " type="button" class="btn btn-primary">Tambah User</a>
+                            <a href="{{ route('admin.user.create') }}" type="button" class="btn btn-primary">Tambah User</a>
                         </div>
                         <table class="table">
                             <thead class="thead-light">
@@ -45,25 +45,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-
+                                @foreach ($users as $user)
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td>celly@gmail.com</td>
-                                    <td>celly</td>
-                                    <td>admin</td>
+                                    <th scope="row">{{ $loop->iteration }}</th>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->role }}</td>
                                     <td>
                                         <div class="text-center">
-                                            <a href=" " class="btn btn-warning update-edit-btn me-2">Edit</a>
-                                                <form action=" " method="POST" class="d-inline"
+                                            <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-warning update-edit-btn me-2"
+                                                >Edit</a>
+                                                <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" class="d-inline"
                                                     onsubmit="return confirm('Yakin ingin menghapus user ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Hapus</button>
                                                 </form>
-                                        </div>    
+                                        </div>
                                     </td>
                                 </tr>
-                                
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,14 @@
     <link href="../assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
     <link href="../assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.css" rel="stylesheet">
     <link href="../dist/css/style.min.css" rel="stylesheet">
+
+
 </head>
+
 <body>
+    {{-- <a href="{{ url()->previous() }}" class="btn btn-light position-absolute m-3" style="top: 0; left: 0; z-index: 1050;">
+        ← Keluar
+    </a> --}}
     <section class="vh-100">
         <div class="container-fluid h-custom">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -19,8 +26,9 @@
                     <img src="https://img.freepik.com/free-vector/privacy-policy-concept-illustration_114360-7853.jpg?t=st=1740619262~exp=1740622862~hmac=19930bbbdd5f46befe66ac33f686894f8aa173611f51aacf1de8af699bcb19f3&w=900"
                         class="img-fluid" alt="Sample image">
                 </div>
+
                 <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                    <form action=" " method="POST">
+                    <form action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                             <h1 class="mb-3 fw-bold">Masuk</h1>
@@ -48,6 +56,7 @@
     @yield('scripts')
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 @if (session('error'))
     <script>
         Swal.fire({
@@ -58,6 +67,7 @@
         });
     </script>
 @endif
+
 @if (session('success'))
     <script>
         Swal.fire({
@@ -68,4 +78,5 @@
         });
     </script>
 @endif
+
 </html>
