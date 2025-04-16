@@ -1,7 +1,7 @@
 @extends('template.layout')
 
 @section('container')
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
         <script>
             Swal.fire({
@@ -11,7 +11,7 @@
                 confirmButtonColor: '#6c5ce7'
             });
         </script>
-    @endif --}}
+    @endif
     <div class="page-wrapper">
         <div class="page-breadcrumb">
             <div class="row align-items-center">

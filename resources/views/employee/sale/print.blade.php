@@ -11,7 +11,7 @@
                         <li class="breadcrumb-item"><a href="" class="link">Pembayaran</a></li>
                     </ol>
                 </nav>
-                <h1 class="mb-0 fw-bold">Pembayaran</h1>
+                <h1 class="mb-0 fw-bold">Pembayaran</h1> 
             </div>
         </div>
     </div>
@@ -75,6 +75,7 @@
                 <div class="card-body p-0">
                     <div class="invoice-container">
                         <div class="invoice-header">
+                            <!-- Row start -->
                             <div class="row gutters">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <div class="custom-actions-btns mb-5">
@@ -110,8 +111,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Row end -->
                         </div>
                         <div class="invoice-body">
+                            <!-- Row start -->
                             <div class="row gutters">
                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                     <div class="table-responsive">
@@ -150,6 +153,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Row end -->
                         </div>
                         <div class="invoice-price">
                             <div class="invoice-price-left">

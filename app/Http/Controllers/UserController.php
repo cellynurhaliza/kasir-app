@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Exports\UserExport;
+use App\Models\Detail_sale;
+use App\Models\Sale;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -80,5 +83,20 @@ class UserController extends Controller
     public function exportExcel()
     {
         return Excel::download(new UserExport, 'laporan-user.xlsx');
+    }
+
+    public function exportPDF($id)
+    {
+        $sale = Sale::with('member', 'user')->findOrFail($id);
+        $detail_sale = Detail_sale::where('sale_id', $sale->id)->with('product')->get();
+
+        $data = [
+            'sale' => $sale,
+            'detail_sale' => $detail_sale,
+            'isMember' => $sale->member != null,
+        ];
+        $pdf = Pdf::loadView('employee.sale.pdf', $data);
+        $pdf->setPaper('A4', 'potrait');
+        return $pdf->download('receipt.pdf');
     }
 }

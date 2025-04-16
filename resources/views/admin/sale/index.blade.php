@@ -74,7 +74,7 @@
                                                 <td>
                                                     <a href="" data-bs-target="#show-{{ $sale->id }}"
                                                         data-bs-toggle="modal" class="btn btn-warning me-2">Lihat</a>
-                                                    <a href="{{ route('employee.sale.exportPDF', $sale->id) }}"
+                                                    <a href="{{ route('admin.user.exportPDF', $sale->id) }}"
                                                         class="btn btn-info me-2">Unduh Bukti</a>
                                                 </td>
                                             </tr>

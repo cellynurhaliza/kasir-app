@@ -31,6 +31,7 @@ Route::middleware(['isAdmin', 'isLogin'])->prefix('admin')->name('admin.')->grou
     Route::controller(SaleController::class)->prefix('sale')->name('sale.')->group(function () {
         Route::get('/', 'indexAdmin')->name('index');
         Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
+        Route::get('/exportPDF', 'exportExcel')->name('exportExcel');
     });
 
     Route::controller(UserController::class)->prefix('user')->name('user.')->group(function () {
@@ -40,7 +41,7 @@ Route::middleware(['isAdmin', 'isLogin'])->prefix('admin')->name('admin.')->grou
         Route::get('/edit/{id}', 'edit')->name('edit');
         Route::put('/update/{id}', 'update')->name('update');
         Route::delete('/{id}', 'destroy')->name('destroy');
-        Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
+        Route::get('/exportPDF/{id}', 'exportPDF')->name('exportPDF');
     });
 });
 

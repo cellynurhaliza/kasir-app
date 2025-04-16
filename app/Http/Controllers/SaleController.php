@@ -73,6 +73,8 @@ class SaleController extends Controller
         $total_pay = (int)str_replace(['Rp. ', '.'], '', $request->total_pay);
         $total = (int)$request->total;
         $member_id = null;
+        $used_point = 0;
+        $discount = 0;
 
         if ($request->member == 'Member') {
             $telephone = $request->telephone;
@@ -80,15 +82,23 @@ class SaleController extends Controller
             $existMember = Member::where('telephone', $telephone)->first();
 
             if ($existMember) {
-                $existMember->update([
-                    'point' => $existMember->point + ($total / 100),
-                ]);
+                $used_point = min($existMember->point, $total); // Gunakan sebanyak mungkin, tapi tidak melebihi total
+                $discount = $used_point;
+
+                // Update sisa poin setelah dipakai
+                $existMember->point -= $used_point;
+
+                // Simpan poin tambahan dari transaksi ini, nanti ditambah setelah Sale dibuat
+                $newPoint = $total / 100;
+
+                $existMember->save();
                 $member_id = $existMember->id;
             } else {
+                $newPoint = $total / 100;
                 $newMember = Member::create([
                     'name' => $name,
                     'telephone' => $telephone,
-                    'point' => $total / 100,
+                    'point' => 0, // Belum dapat poin karena transaksi belum selesai
                 ]);
                 $member_id = $newMember->id;
             }
@@ -98,13 +108,13 @@ class SaleController extends Controller
             'sale_date' => now(),
             'member_id' => $member_id,
             'total_price' => $total,
-            'discount' => 0,
+            'discount' => $discount,
             'total_pay' => $total_pay,
-            'total_return' => $total_pay - $total,
+            'total_return' => $total_pay - ($total - $discount),
             'user_id' => Auth::user()->id,
-            'sales_products' => implode(', ', $sales_products),
-            'point' => $total / 100,
-            'used_point' => 0
+            'sales_products' => implode(', ', $sales_products) ?? '',
+            'point' => $newPoint ?? 0, // poin yang didapat dari transaksi ini
+            'used_point' => $used_point
         ]);
 
         foreach ($products as $product) {
@@ -132,12 +142,17 @@ class SaleController extends Controller
 
         $sale->update(['sales_products' => implode("\n", $sales_products)]);
 
+        // Tambahkan poin hasil transaksi ke member (jika ada)
         if ($request->member == 'Member') {
+            $member = Member::find($member_id);
+            $member->point += $newPoint ?? 0;
+            $member->save();
             return redirect()->route('employee.sale.member', $sale->id);
         }
 
         return redirect()->route('employee.sale.print', $sale->id);
     }
+
 
     public function member($id)
     {
@@ -147,43 +162,30 @@ class SaleController extends Controller
         return view('employee.sale.member', compact('sale', 'detail_sale', 'isFirst'));
     }
 
-
     public function updateSale(Request $request, $id)
-{
-    $sale = Sale::with('member')->findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|max:255',
-    ]);
-
-    $isFirst = Sale::where('member_id', $sale->member_id)->count() == 1;
-
-    if ($request->use_point_request == '1' && !$isFirst) {
-        $availablePoint = $sale->member->point;
-        $discountToApply = min($availablePoint, $sale->total_price); // Gunakan poin sesuai kebutuhan
-        $discountedTotal = $sale->total_price - $discountToApply;
-        $remainingPoint = $availablePoint - $discountToApply;
-
-        $sale->update([
-            'discount' => $discountToApply,
-            'total_price' => $discountedTotal,
-            'total_return' => $sale->total_return + $discountToApply,
-            'used_point' => $discountToApply, // catat poin yang dipakai
+    {
+        $sale = Sale::with('member')->findOrFail($id);
+        $request->validate([
+            'name' => 'required|string|max:255',
         ]);
-
-        $sale->member->update([
-            'name' => $request->name,
-            'point' => $remainingPoint,
-        ]);
-    } else {
-        $sale->member->update([
-            'name' => $request->name,
-        ]);
+        if ($request->check_poin == 'Ya') {
+            $sale->update([
+                'used_point' => $sale->member->point,
+                'total_price' => $sale->total_price,
+                'discount' => $sale->total_price - $sale->member->point,
+                'total_return' => $sale->total_pay - $sale->discount,
+            ]);
+            $sale->member->update([
+                'name' => $request->name,
+                'point' => 0,
+            ]);
+        } else {
+            $sale->member->update([
+                'name' => $request->name,
+            ]);
+        }
+        return redirect()->route('employee.sale.print', $sale->id);
     }
-
-    return redirect()->route('employee.sale.print', $sale->id);
-}
-
 
     public function print($id)
     {
@@ -209,10 +211,6 @@ class SaleController extends Controller
 
     public function exportExcel()
     {
-        if (Auth::user()->role === 'admin') {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses!');
-        } else {
-            return Excel::download(new SalesExport, 'laporan-penjualan.xlsx');
-        }
+        return Excel::download(new SalesExport, 'laporan-penjualan.xlsx');
     }
 }
