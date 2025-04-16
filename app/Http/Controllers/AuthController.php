@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Sale;
 use App\Models\User;
 use Carbon\Carbon;
@@ -63,7 +64,11 @@ class AuthController extends Controller
         $productNames = $productSales->pluck('product_name')->toArray();
         $productTotals = $productSales->pluck('total_sold')->toArray();
 
-        return view('admin.dashboard', compact('dates', 'salesCount', 'productNames', 'productTotals'));
+        $products = Product::select('name', 'stock')->get();
+    $productNames = $products->pluck('name');
+    $productStock = $products->pluck('stock');
+
+        return view('admin.dashboard', compact('dates', 'salesCount', 'productNames', 'productTotals', 'productStock'));
     }
 
     public function employeePage()
@@ -85,6 +90,11 @@ class AuthController extends Controller
         $latestTransaksi = Sale::latest()->first();
         $users = User::all();
 
-        return view('employee.dashboard', compact('totalSales', 'users', 'latestTransaksi'));
+
+        return view('employee.dashboard', compact(
+            'totalSales',
+            'users',
+            'latestTransaksi',
+        ));
     }
 }

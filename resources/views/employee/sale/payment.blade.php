@@ -20,7 +20,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{ " method="POST">
+                        <form action="{{ route('employee.sale.paymentProccess') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-6 col-md-12">
@@ -29,29 +29,29 @@
                                         <thead>
                                         </thead>
                                         <tbody>
-                                            
+                                            @foreach ($products as $product)
                                                 <tr>
-                                                    <td> <br>
-                                                        <small>
+                                                    <td>{{ $product['name'] }} <br>
+                                                        <small>{{ 'Rp. ' . number_format($product['price'], 0, ',', '.') }}
                                                             X
-                                                            </small></td>
-                                                    <td><b></b>
+                                                            {{ $product['quantity'] }}</small></td>
+                                                    <td><b>{{ 'Rp. ' . number_format($product['sub_total'], 0, ',', '.') }}</b>
                                                     </td>
                                                 </tr>
                                                 <input type="hidden" name="shop[]"
-                                                    value=" "
+                                                    value="{{ $product['product_id'] . ';' . $product['name'] . ';' . $product['price'] . ';' . $product['quantity'] . ';' . $product['sub_total'] }}"
                                                     hidden="">
-                                            
+                                            @endforeach
                                             <tr>
                                                 <td style="padding-top: 20px; font-size: 20px;"><b>Total</b></td>
                                                 <td class="tex-end" id="get_total"
                                                     style="padding-top: 20px; font-size: 20px;">
-                                                    <b> </b>
+                                                    <b>{{ 'Rp. ' . number_format($total, 0, ',', '.') }}</b>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <input type="text" name="total" id="total" value=" "
+                                    <input type="text" name="total" id="total" value="{{ $total }}"
                                         hidden="">
                                 </div>
                                 <div class="col-lg-6 col-md-12">
@@ -104,7 +104,53 @@
             </div>
         </div>
         <script>
-            
+            function checkTotalPay() {
+                const totalElement = document.getElementById('total').value;
+                const totalPayElement = document.getElementById('total_pay').value;
+                const total = parseInt(totalElement.replace(/[^\d]/g, ''));
+                const total_pay = parseInt(totalPayElement.replace(/[^\d]/g, ''));
+
+                if (total_pay < total) {
+                    document.getElementById('error-message').classList.remove('d-none');
+                    document.getElementById('submit-button').disabled = true;
+                } else {
+                    document.getElementById('error-message').classList.add('d-none');
+                    document.getElementById('submit-button').disabled = false;
+                }
+            }
+
+            function memberDetect() {
+                const detectElement = document.getElementById('member');
+                const telephone = document.getElementById('member-wrap');
+                const is_member = detectElement.value;
+
+                if (is_member == 'Member') {
+                    telephone.classList.remove('d-none');
+                } else {
+                    telephone.classList.add('d-none');
+                }
+            }
+
+            var totalPayInput = document.getElementById('total_pay');
+            totalPayInput.addEventListener('keyup', function(e) {
+                totalPayInput.value = formatRupiah(this.value, 'Rp. ');
+            });
+
+            function formatRupiah(angka, prefix) {
+                var number_string = angka.replace(/[^,\d]/g, '').toString(),
+                    split = number_string.split(','),
+                    sisa = split[0].length % 3,
+                    rupiah = split[0].substr(0, sisa),
+                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+                return prefix == undefined ? rupiah : (rupiah ? prefix + rupiah : '');
+            }
         </script>
     </div>
 @endsection

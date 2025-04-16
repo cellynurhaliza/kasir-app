@@ -33,6 +33,8 @@
                     <div class="table-responsive">
                         <div class="p-4 text-end">
                             <a href="{{ route('admin.user.create') }}" type="button" class="btn btn-primary">Tambah User</a>
+                            <a href="{{ route('admin.user.exportExcel') }}" class="btn btn-info mr-2">Ekspor
+                                User (.xlsx)</a>
                         </div>
                         <table class="table">
                             <thead class="thead-light">

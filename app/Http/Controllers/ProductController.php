@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductExport;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -102,5 +105,10 @@ class ProductController extends Controller
 
         return redirect()->route('admin.product.index')->with('success', 'Produk berhasil dihapus.');
         }
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new ProductExport, 'laporan-produk.xlsx');
     }
 }

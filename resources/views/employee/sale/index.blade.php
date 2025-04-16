@@ -1,4 +1,4 @@
-{@extends('template.layout')
+@extends('template.layout')
 
 @section('container')
     <div class="page-wrapper">
@@ -22,7 +22,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="p-4 d-flex justify-content-between align-items-center flex-wrap">
-                                <a href=" " class="btn btn-info mr-2">Ekspor
+                                <a href="{{ route('employee.sale.exportExcel') }}" class="btn btn-info mr-2">Ekspor
                                     Penjualan (.xlsx)</a>
 
                                 <a href="{{ route('employee.sale.create') }}" class="btn btn-primary mt-2 mt-md-0">Tambah

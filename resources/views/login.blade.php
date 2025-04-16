@@ -56,7 +56,7 @@
     @yield('scripts')
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+{{--
 @if (session('error'))
     <script>
         Swal.fire({
@@ -77,6 +77,6 @@
             confirmButtonColor: '#3085d6'
         });
     </script>
-@endif
+@endif --}}
 
 </html>

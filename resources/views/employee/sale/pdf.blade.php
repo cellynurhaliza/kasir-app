@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,17 +63,17 @@
     <div class="struk">
         <h4 class="text-center mb-4">Indo April</h4>
         <div class="header-info">
-            
-                <p><strong>Member Status : </strong> </p>
-                <p><strong>No. HP : </strong> </p>
-                <p><strong>Bergabung Sejak : </strong> </p>
-                <p><strong>Poin Member : </strong> </p>
-            
+            @if ($sale->member)
+                <p><strong>Member Status : </strong>{{ $sale->member ? 'Member' : 'Bukan Member' }}</p>
+                <p><strong>No. HP : </strong>{{ $sale->member->telephone }}</p>
+                <p><strong>Bergabung Sejak : </strong>{{ $sale->member->created_at->format('d F Y') }}</p>
+                <p><strong>Poin Member : </strong>{{ $sale->member->point }}</p>
+            @else
                 <p><strong>Member Status : </strong>Bukan Member</p>
                 <p><strong>No. HP : </strong>-</p>
                 <p><strong>Bergabung Sejak : </strong>-</p>
                 <p><strong>Poin Member : </strong>-</p>
-            
+            @endif
         </div>
         <table class="table table-bordered">
             <thead>
@@ -84,49 +85,57 @@
                 </tr>
             </thead>
             <tbody>
-                
+                @foreach ($detail_sale as $sales)
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ $sales->product->name }}</td>
+                        <td>{{ $sales->quantity }}</td>
+                        <td>Rp {{ number_format($sales->product->price, 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($sales->sub_total, 0, ',', '.') }}</td>
                     </tr>
-                
+                @endforeach
                 <tr>
                     <th></th>
                     <th></th>
                     <th>Total Harga</th>
-                    
-                        <th>Rp. </th>
-                    
-                        <th>Rp. </th>
-                    
+                    @if ($sale->used_point > 0)
+                        <th>Rp. {{ number_format($sale->discount, 0, ',', '.') }}</th>
+                    @else
+                        <th>Rp. {{ number_format($sale->total_price, 0, ',', '.') }}</th>
+                    @endif
                 </tr>
                 <tr>
                     <th>Poin Digunakan</th>
-                    <th> </th>
+                    <th>{{ $sale->used_point }}</th>
                     <th>Harga Setelah Poin</th>
-                    
-                        <th>Rp. </th>
-                    
+                    @if ($sale->used_point > 0)
+                        <th>Rp. {{ number_format($sale->discount, 0, ',', '.') }}</th>
+                    @else
                         <th>Rp. 0</th>
-                    
+                    @endif
                 </tr>
                 <tr>
                     <th></th>
                     <th></th>
                     <th>Total Kembalian</th>
-                    <th>Rp </th>
+                    <th>Rp {{ number_format($sale->total_return, 0, ',', '.') }}</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Total Bayar</th>
+                    <th>Rp {{ number_format($sale->total_pay, 0, ',', '.') }}</th>
                 </tr>
             </tbody>
         </table>
         <div class="footer">
-            <p> T .000000Z | petugas</p>
+            <p>{{ now()->format('d-m-Y') }} {{ now()->format('H:i:s') }} | {{ $sale->user->name }}</p>
             <p>Terima kasih atas pembelian Anda!</p>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

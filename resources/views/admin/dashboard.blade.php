@@ -1,7 +1,7 @@
 @extends('template.layout')
 
 @section('container')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
         <script>
             Swal.fire({
@@ -11,7 +11,7 @@
                 confirmButtonColor: '#6c5ce7'
             });
         </script>
-    @endif
+    @endif --}}
     <div class="page-wrapper">
         <div class="page-breadcrumb">
             <div class="row align-items-center">
@@ -34,8 +34,9 @@
                         <div class="card-body">
                             <div class="d-md-flex align-items-center">
                                 <div>
-                                    <h4 class="card-title">Selamat datang, admin!</h4>
+                                    <h4 class="card-title">Selamat datang, {{ Auth::user()->name }}!</h4>
                                 </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
@@ -44,14 +45,22 @@
                                 <div class="col-md-4">
                                     <canvas id="productChart"></canvas>
                                 </div>
+                                <div class="col-md-12 mt-4">
+                                    <h5>Stok Produk</h5>
+                                    <canvas id="stockChart"></canvas>
+                                </div>
+
                             </div>
+
                             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                             <script>
+                                var dates = {!! json_encode($dates ?? []) !!};
+                                var salesCount = {!! json_encode($salesCount ?? []) !!};
+                                var productNames = {!! json_encode($productNames ?? []) !!};
+                                var productTotals = {!! json_encode($productTotals ?? []) !!};
+                                var productStock = {!! json_encode($productStock ?? []) !!};
 
-
-
-
-
+                                var ctxBar = document.getElementById('salesChart').getContext('2d');
                                 var salesChart = new Chart(ctxBar, {
                                     type: 'bar',
                                     data: {
@@ -74,6 +83,8 @@
                                     }
                                 });
 
+
+                                var ctxPie = document.getElementById('productChart').getContext('2d');
                                 var productChart = new Chart(ctxPie, {
                                     type: 'pie',
                                     data: {
@@ -89,7 +100,34 @@
                                         responsive: true
                                     }
                                 });
+
+
+
+                                var ctxStock = document.getElementById('stockChart').getContext('2d');
+                                var stockChart = new Chart(ctxStock, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: productNames,
+                                        datasets: [{
+                                            label: 'Stok Produk',
+                                            data: productStock,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                });
+
                             </script>
+
                         </div>
                     </div>
                 </div>

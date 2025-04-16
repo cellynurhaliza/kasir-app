@@ -1,6 +1,27 @@
 @extends('template.layout')
 
 @section('container')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6c5ce7'
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6c5ce7'
+            });
+        </script>
+    @endif
     <div class="page-wrapper">
         <div class="page-breadcrumb">
             <div class="row align-items-center">
@@ -21,9 +42,11 @@
                 <div class="container-fluid">
                     <div class="card">
                         <div class="card-body">
-                            <div class="p-4 d-flex justify-content-between">
-                                <a href=" " class="btn btn-info te">Ekspor Penjualan (.xlsx)</a>
+                            <div class="p-4 d-flex justify-content-between align-items-center flex-wrap">
+                                <a href="{{ route('admin.sale.exportExcel') }}" class="btn btn-info mr-2">Ekspor
+                                    Penjualan (.xlsx)</a>
                             </div>
+
                             <div class="table-responsive">
                                 <table id="tabel-data" class="table table-striped">
                                     <thead>
@@ -37,21 +60,25 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach ($sales as $sale)
                                             <tr>
-                                                <td>1</td>
-                                                <td>BUKAN MEMBER</td>
-                                                <td>05-05-2025</td>
-                                                <td>Rp. 50.000</td>
-                                                <td>petugas</td>
+                                                <td>{{ $loop->iteration }}</td>
+                                                @if ($sale->member)
+                                                    <td>{{ $sale->member->name }}</td>
+                                                @else
+                                                    <td>BUKAN MEMBER</td>
+                                                @endif
+                                                <td>{{ $sale->sale_date }}</td>
+                                                <td>Rp. {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                                                <td>{{ $sale->user->name }}</td>
                                                 <td>
-                                                    <a href="" data-bs-target="#show- "
+                                                    <a href="" data-bs-target="#show-{{ $sale->id }}"
                                                         data-bs-toggle="modal" class="btn btn-warning me-2">Lihat</a>
-                                                    <a href=" "
+                                                    <a href="{{ route('employee.sale.exportPDF', $sale->id) }}"
                                                         class="btn btn-info me-2">Unduh Bukti</a>
                                                 </td>
                                             </tr>
-                                            <div class="modal" tabindex="-1" id="show- ">
+                                            <div class="modal" tabindex="-1" id="show-{{ $sale->id }}">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -64,17 +91,17 @@
                                                                 <div class="col-6">
                                                                     <small>
                                                                         <strong>Member Status :
-                                                                            Member</strong><br>
+                                                                            {{ $sale->member ? 'Member' : 'Bukan Member' }}</strong><br>
                                                                         <strong>No. HP :
-                                                                            088</strong><br>
+                                                                            {{ $sale->member ? $sale->member->telephone : '-' }}</strong><br>
                                                                         <strong>Poin Member :
-                                                                            200</strong>
+                                                                            {{ $sale->member ? $sale->member->point : 0 }}</strong>
                                                                     </small>
                                                                 </div>
                                                                 <div class="col-6">
                                                                     <small>
                                                                         <strong>Bergabung Sejak :
-                                                                            05 Apr 2025</strong>
+                                                                            {{ $sale->member ? $sale->member->created_at->format('d F Y') : '-' }}</strong>
                                                                     </small>
                                                                 </div>
                                                             </div>
@@ -84,50 +111,50 @@
                                                                 <div class="col-3"><b>Harga</b></div>
                                                                 <div class="col-3"><b>Sub Total</b></div>
                                                             </div>
-
-
+                                                            @foreach ($detail_sale as $item)
+                                                                @if ($sale->id == $item->sale_id)
                                                                     <div class="row mb-1">
                                                                         <div class="col-3 text-center">
-                                                                            Jelly
+                                                                            {{ $item->product ? $item->product->name : '-' }}
                                                                         </div>
                                                                         <div class="col-3 text-center">
-                                                                            2
+                                                                            {{ $item->quantity }}
                                                                         </div>
                                                                         <div class="col-3 text-center">
-                                                                            Rp. 25.000
+                                                                            {{ 'Rp. ' . number_format($item->product['price'], 0, ',', '.') }}
                                                                         </div>
                                                                         <div class="col-3 text-center">
-                                                                            Rp. 50.000
+                                                                            {{ 'Rp. ' . number_format($item['sub_total'], 0, ',', '.') }}
                                                                         </div>
                                                                     </div>
-
-
+                                                                @endif
+                                                            @endforeach
                                                             <div class="row text-center mt-3">
                                                                 <div class="col-9 text-end"><b>Total</b></div>
                                                                 <div class="col-3">
-
-                                                                        <b>19.000</b>
-
-
-
+                                                                    @if ($sale->used_point > 0)
+                                                                        <b>{{ 'Rp. ' . number_format($sale['discount'], 0, ',', '.') }}</b>
+                                                                    @else
+                                                                        <b>{{ 'Rp. ' . number_format($sale['total_price'], 0, ',', '.') }}</b>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                             <div class="row mt-3">
                                                                 <center>
-                                                                    Dibuat pada : 5 apr
+                                                                    Dibuat pada : {{ $sale->created_at }}
                                                                     <br> Oleh :
-                                                                    petugas
+                                                                    {{ $sale->user->name }}
                                                                 </center>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <a href=" "
+                                                            <a href="{{ route('employee.sale.index') }}"
                                                                 class="btn btn-secondary" data-bs-dismiss="modal">Tutup</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -139,10 +166,10 @@
     </div>
 @endsection
 @section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.min.css"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $('#tabel-data').DataTable({
@@ -161,24 +188,4 @@
             });
         });
     </script>
-    @if (session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                text: {!! json_encode(session('error')) !!},
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#d33'
-            });
-        </script>
-    @endif
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                text: {!! json_encode(session('success')) !!},
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#3085d6'
-            });
-        </script>
-    @endif
 @endsection

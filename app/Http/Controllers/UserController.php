@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UserExport;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -73,5 +75,10 @@ class UserController extends Controller
         $users->delete();
 
         return redirect()->route('admin.user.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new UserExport, 'laporan-user.xlsx');
     }
 }

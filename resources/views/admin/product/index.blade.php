@@ -47,6 +47,8 @@
                                 <div class="p-4 text-end">
                                     <a href="{{ route('admin.product.create') }}" type="button"
                                         class="btn btn-primary">Tambah Produk</a>
+                                        <a href="{{ route('admin.product.exportExcel') }}" class="btn btn-info mr-2">Ekspor
+                                            Produk (.xlsx)</a>
                                 </div>
                                 <thead class="thead-light">
                                     <tr>

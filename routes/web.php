@@ -25,10 +25,12 @@ Route::middleware(['isAdmin', 'isLogin'])->prefix('admin')->name('admin.')->grou
         Route::put('/updateEdit/{id}', 'updateEdit')->name('updateEdit');
         Route::put('/updateStock/{id}', 'updateStock')->name('updateStock');
         Route::delete('/{id}', 'destroy')->name('destroy');
+        Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
     });
 
     Route::controller(SaleController::class)->prefix('sale')->name('sale.')->group(function () {
-        Route::get('/', 'index')->name('index');
+        Route::get('/', 'indexAdmin')->name('index');
+        Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
     });
 
     Route::controller(UserController::class)->prefix('user')->name('user.')->group(function () {
@@ -38,27 +40,24 @@ Route::middleware(['isAdmin', 'isLogin'])->prefix('admin')->name('admin.')->grou
         Route::get('/edit/{id}', 'edit')->name('edit');
         Route::put('/update/{id}', 'update')->name('update');
         Route::delete('/{id}', 'destroy')->name('destroy');
+        Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
     });
 });
 
 Route::middleware(['isEmployee', 'isLogin'])->prefix('employee')->name('employee.')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'employeePage'])->name('home');
 
-    // Route::get('/product', [AuthController::class, 'indexEmployee'])->name('index');
-
-    Route::controller(ProductController::class)->prefix('product')->name('product.')->group(function () {
-        Route::get('/', 'indexAdmin')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/edit/{id}', 'edit')->name('edit');
-        Route::put('/updateEdit/{id}', 'updateEdit')->name('updateEdit');
-        Route::put('/updateStock/{id}', 'updateStock')->name('updateStock');
-        Route::delete('/{id}', 'destroy')->name('destroy');
-    });
+    Route::get('/product', [ProductController::class, 'indexEmployee'])->name('index');
 
     Route::controller(SaleController::class)->prefix('sale')->name('sale.')->group(function () {
         Route::get('/', 'indexEmployee')->name('index');
         Route::get('/create', 'create')->name('create');
         Route::post('/store', 'store')->name('store');
+        Route::post('/paymentProccess', 'paymentProccess')->name('paymentProccess');
+        Route::get('/member/{id}', 'member')->name('member');
+        Route::get('/print/{id}', 'print')->name('print');
+        Route::put('/updateSale/{id}', 'updateSale')->name('updateSale');
+        Route::get('/exportExcel', 'exportExcel')->name('exportExcel');
+        Route::get('/exportPDF/{id}', 'exportPDF')->name('exportPDF');
     });
 });

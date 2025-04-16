@@ -23,6 +23,8 @@
                     <div class="card">
                         <div class="table-responsive">
                             <table class="table">
+                                <div class="p-4 text-end">
+                                </div>
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -33,15 +35,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($products as $product)
                                         <tr>
-                                            <th scope="row"></th>
-                                            <td><img src="" width="100"></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
+                                            <th scope="row">{{ $loop->iteration }}</th>
+                                            <td><img src="{{ asset('storage/' . $product->image) }}" width="100"></td>
+                                            <td>{{ $product->name }}</td>
+                                            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                                            <td>{{ $product->stock }}</td>
                                         </tr>
-                                   
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
